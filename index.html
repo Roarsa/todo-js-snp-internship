@@ -1,8 +1,9 @@
-<html>
+<html lang="en">
 
 <head>
 	<title>Todo List</title>
 	<link rel="stylesheet" href="style.css" type="text/css">
+	<link rel="shortcut icon" href="./img/favicon.png">
 	<script src="main.js"></script>
 </head>
 
@@ -15,17 +16,19 @@
 				<div class="clear-items" onclick="сlearAll()"></div>
 			</div>
 			<div class="todo-list_main">
-				<div class="todo-list_items">
-				</div>
 				<div class="todo-list_new-task">
-					<textarea id="new-task__text" placeholder="Мне нужно сделать.."></textarea>
-					<button class="new-task__add" onclick="addNewTask()">Add</button>
+					<form class="new-task" onsubmit="addNewTask()">
+						<textarea id="new-task__text" placeholder="I need to do.." onkeydown="isEnter(event.keyCode)"></textarea>
+						<button class="new-task__add" type="submit">Add</button>
+					</form>
+					
 				</div>
 				<div class="todo-list_type">
-					<button class="todo-list__type all" onclick="showAll()">All</button>
-					<button class="new-task__type" onclick="showActive()">Active</button>
-					<button class="new-task__type" onclick="showComplited()">Complited</button>
+					<button class="new-task__type new-task__type-all" onclick="showAll()">All</button>
+					<button class="new-task__type new-task__type-active" onclick="showActive()">Active</button>
+					<button class="new-task__type new-task__type-completed" onclick="showCompleted()">Complited</button>
 				</div>
+				<div class="todo-list_items"></div>
 			</div>
 		</div>
 	</div>

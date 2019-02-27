@@ -23,6 +23,7 @@ body {
 .container {
 	width: 100%;
 	height: 100%;
+	margin-bottom: 10px;
 }
 
 .todo-list {
@@ -33,6 +34,7 @@ body {
 	left: 0;
 	right: 0;
 	margin: auto;
+	margin-bottom: 30px;
 	background-color: #28475e;
 	color: white;
 	box-shadow: 5px 5px 30px black;
@@ -64,7 +66,7 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	border-bottom: 1px dotted #84abb9;
+	border-top: 1px dotted #84abb9;
 }
 
 input[type="checkbox"] {
@@ -82,6 +84,7 @@ label::before {
 	margin: 0 20px;
 	border-radius: 100%;
 	cursor: pointer;
+	overflow: hidden;
 }
 
 input[type="checkbox"]:checked+label::before {
@@ -103,6 +106,7 @@ input[type="checkbox"]:checked~.task {
 	font-family: Cocon-Regular;
 	font-size: 11pt;
 	flex-grow: 5;
+	word-break: break-word;
 	text-align: justify;
 }
 
@@ -160,10 +164,12 @@ textarea {
 	background-color: #0f21296e;
 	color: #c3c0c0;
 	font-family: Cocon-Regular;
+	font-size: 14px;
 	padding: 4px 15px;
 	resize: none;
 	overflow: hidden;
 	outline: none;
+	word-wrap: break-word;
 }
 
 
@@ -193,6 +199,10 @@ button.new-task__add:hover {
 	cursor: pointer;
 }
 
+.clear-items:hover {
+	background-image: url(./img/deleteAllHover.png);
+}
+
 .checked-items {
 	background-image: url(./img/completeAll.png);
 	width: 50px;
@@ -202,6 +212,10 @@ button.new-task__add:hover {
 	right: 55px;
 	top: 10px;
 	cursor: pointer;
+}
+
+.checked-items:hover {
+	background-image: url(./img/completeAllHover.png);
 }
 
 .checked-items_complete {
@@ -216,13 +230,43 @@ button.new-task__add:hover {
 }
 
 .item_menu__delete {
-	display: none;
+	opacity: 0;
+	margin: auto 10px;
 }
 
 .item:hover>.item_menu__delete {
-	display: block;
+	opacity: 1;
+}
+
+.item_menu__delete:hover>.item_menu__delete__logo {
+	background-image: url(./img/deleteItemHover.png);	
 }
 
 .todo-list_type {
 	text-align: center;
+	display: block;
+}
+
+.todo-list_type-hidden {
+	display: none;
+}
+
+.todo-list_items-completed>.item-active {
+	display: none;
+}
+
+.todo-list_items-active>.item-complete {
+	display: none;
+}
+
+.new-task__type-chosen {
+	text-decoration: underline;
+	text-decoration-style: dotted;
+}
+
+.new-task {
+	display: flex;
+	align-items: center;
+	margin: auto;
+	margin-right: 10%;
 }

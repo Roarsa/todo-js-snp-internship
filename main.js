@@ -47,37 +47,53 @@ if (localStorage["items"] == undefined) {
 if (localStorage["flag"] == undefined) {
   storageOperations.setStorageItem("flag", false);
 }
+if(localStorage["currentId"] == undefined) {
+  storageOperations.setStorageItem("currentId", -1);
+}
 
 function localItems() {
   var items = storageOperations.getStorageItem("items");
-  for (var i = 0; i < items.length; i++) {
-    var element = items[i];
-    renderItem(element.id, element.task, element.check);
-  }
-  var icon = (document.getElementsByClassName("checked-items"))[0];
-  var flag = storageOperations.getStorageItem('flag');
-  if (flag) {
-    icon.className += ' checked-items_complete';
+  if (items.length == 0) {
+    (document.getElementsByClassName("todo-list_type"))[0].className += " todo-list_type-hidden";
   }
   else {
-    icon.className = 'checked-items';
+    for (var i = 0; i < items.length; i++) {
+      var element = items[i];
+      renderItem(element.id, element.task, element.check);
+    }
+    var icon = (document.getElementsByClassName("checked-items"))[0];
+    var flag = storageOperations.getStorageItem('flag');
+    if (flag) {
+      icon.className += ' checked-items_complete';
+    }
+    else {
+      icon.className = 'checked-items';
+    }
   }
 }
 
 function addNewTask() {
   var text = document.getElementById("new-task__text").value;
-  if (text != "") {
+  if (text.trim() != "") {
+    if ((document.getElementsByClassName("todo-list_type-hidden"))[0]) {
+      (document.getElementsByClassName("todo-list_type"))[0].className = "todo-list_type";
+    }
     document.getElementById("new-task__text").value = "";
     var items = storageOperations.getStorageItem("items");
     items.push({'id': items.length, 'task': text,'check': false});
     storageOperations.setStorageItem('items', items);
-    renderItem(items.length-1, text, false);
+    var id = storageOperations.getStorageItem("currentId");
+    id += 1;
+    storageOperations.setStorageItem('currentId', id);
+    renderItem(id, text, false);
   } 
+
+  event.preventDefault();
 }
 
 function renderItem(key, task, checkFlag) {
   var div = document.createElement('div');
-  div.className = "item item-" + String(key);
+  div.className = checkFlag ? "item item-" + String(key) + " item-complete" : "item item-" + String(key) + " item-active";
   var parent = (document.getElementsByClassName("todo-list_items"))[0];
   parent.appendChild(div);
   div.appendChild(createElement.ElementInput(key, checkFlag));
@@ -89,7 +105,11 @@ function renderItem(key, task, checkFlag) {
 function сlearAll() {
   localStorage.clear();
   storageOperations.setStorageItem("items", []);
+  storageOperations.setStorageItem("currentId", 0);
+  storageOperations.setStorageItem('flag', false);
+  (document.getElementsByClassName("checked-items"))[0].className = "checked-items";
   (document.getElementsByClassName("todo-list_items"))[0].innerHTML = " ";
+  (document.getElementsByClassName("todo-list_type"))[0].className += " todo-list_type-hidden";
 }
 
 function сompleteAll() {
@@ -97,8 +117,14 @@ function сompleteAll() {
   var icon = (document.getElementsByClassName("checked-items"))[0];
   var items = storageOperations.getStorageItem("items");
   var flag = storageOperations.getStorageItem('flag');
+  if (checkboxes.length == 0) {
+    return;
+  }
   if (!flag) {
     icon.className += ' checked-items_complete';
+    (Array.from(document.getElementsByClassName("item"))).forEach(function(item) {
+      item.className = 'item item-' + String(item.querySelector('input').id) + ' item-complete';
+    });
     checkboxes.forEach(function(item) {
       item.checked = true;
     });
@@ -113,6 +139,9 @@ function сompleteAll() {
     icon.className = 'checked-items';
     checkboxes.forEach(function(item) {
       item.checked = false;
+    });
+    (Array.from(document.getElementsByClassName("item"))).forEach(function(item) {
+      item.className = 'item item-' + String(item.querySelector('input').id) + ' item-active';
     });
     for (var i = 0; i < items.length; i++) {
       items[i].check = false;
@@ -134,43 +163,36 @@ function deleteItem(elem) {
   var parent = (document.getElementsByClassName("todo-list_items"))[0];
   var element = (document.getElementsByClassName("item-" + String(elem)))[0];
   parent.removeChild(element);
+  if (!(document.getElementsByClassName("item"))[0]) {
+    (document.getElementsByClassName("todo-list_type"))[0].className += " todo-list_type-hidden";
+    (document.getElementsByClassName("checked-items"))[0].className = "checked-items";
+  }
 }
 
 function showAll() {
-  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  for (var i=0; i < checkboxes.length; i++) {
-    var element = ((document.getElementsByClassName("item-" + String(checkboxes[i].id)))[0]);
-    element.style.display = "flex";
-  }
+  (document.getElementsByClassName('todo-list_items'))[0].className = "todo-list_items";
+  (document.getElementsByClassName('new-task__type-completed'))[0].className = "new-task__type new-task__type-completed";
+  (document.getElementsByClassName('new-task__type-active'))[0].className = "new-task__type new-task__type-active";
+  (document.getElementsByClassName('new-task__type-all'))[0].className = "new-task__type new-task__type-all new-task__type-chosen";
 }
 
 function showActive() {
-  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  for (var i=0; i < checkboxes.length; i++) {
-    var element = ((document.getElementsByClassName("item-" + String(checkboxes[i].id)))[0]);
-    if (checkboxes[i].checked) {
-      element.style.display = "none";
-    }
-    else {
-      element.style.display = "flex";
-    }
-  }
+  (document.getElementsByClassName('todo-list_items'))[0].className = "todo-list_items todo-list_items-active";
+  (document.getElementsByClassName('new-task__type-completed'))[0].className = "new-task__type new-task__type-completed";
+  (document.getElementsByClassName('new-task__type-active'))[0].className = "new-task__type new-task__type-active new-task__type-chosen";
+  (document.getElementsByClassName('new-task__type-all'))[0].className = "new-task__type new-task__type-all";
 }
 
-function showComplited() {
-  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  for (var i=0; i < checkboxes.length; i++) {
-    var element = ((document.getElementsByClassName("item-" + String(checkboxes[i].id)))[0]);
-    if (checkboxes[i].checked) {
-      element.style.display = "flex";
-    }
-    else {
-      element.style.display = "none";
-    }
-  }
+function showCompleted() {
+  (document.getElementsByClassName('todo-list_items'))[0].className = "todo-list_items todo-list_items-completed";
+  (document.getElementsByClassName('new-task__type-completed'))[0].className = "new-task__type new-task__type-completed new-task__type-chosen";
+  (document.getElementsByClassName('new-task__type-active'))[0].className = "new-task__type new-task__type-active";
+  (document.getElementsByClassName('new-task__type-all'))[0].className = "new-task__type new-task__type-all";
 }
 
 function checkboxChange(elemId, state) {
+  ((document.getElementsByClassName("item-" + String(elemId)))[0]).className = state ?
+     "item item-" + String(elemId) + " item-complete" : "item item-" + String(elemId) + " item-active";
   var items = storageOperations.getStorageItem("items");
   for (var i=0; i < items.length; i++) {
     if (items[i].id == elemId) {
@@ -178,4 +200,10 @@ function checkboxChange(elemId, state) {
     }
   }
   storageOperations.setStorageItem("items", items);
+}
+
+function isEnter(key) {
+  if (key == 13) {
+    addNewTask();
+  }
 }
