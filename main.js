@@ -1,27 +1,28 @@
 var createElement = {
-  ElementP: function(text) {
+  elementP: function(text) {
     var text_p = document.createElement('p');
     text_p.className = "task";
     text_p.innerText = text;
     return text_p;
   },
   
-  ElementInput: function(elId, check) {
+  elementInput: function(elId, check) {
     var inp = document.createElement('input');
     inp.type = "checkbox";
     inp.checked = check;
     inp.id = elId;
+    inp.setAttribute('contenteditable', 'true');
     inp.setAttribute("onchange", "checkboxChange(this.id, this.checked)");
     return inp;
   },
   
-  ElementLabel: function(elId) {
+  elementLabel: function(elId) {
     var lab = document.createElement('label');
     lab.htmlFor = elId;
     return lab;
   },
 
-  ElementDeleteButton: function(elId) {
+  elementDeleteButton: function(elId) {
     var buttonEl = document.createElement('button');
     buttonEl.className = "item_menu__delete";
     buttonEl.id = elId;
